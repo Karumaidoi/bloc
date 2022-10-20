@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:statemng/cubit/cubit_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:statemng/presentation/router/app_router.dart';
+
+import 'Logic/cubit/cubit_cubit.dart';
 
 void main() {
-  runApp(const MyApp());
+  final CounterState counterState1 =
+      CounterState(counterValue: 1, wasIncremented: true);
+  final CounterState counterState2 =
+      CounterState(counterValue: 1, wasIncremented: true);
+  runApp(HomeScreen());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class HomeScreen extends StatelessWidget {
+  HomeScreen({super.key});
 
-  // This widget is the root of your application.
+  final AppRouter _appRouter = AppRouter();
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider<CounterCubit>(
@@ -17,79 +24,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Flutter Bloc',
-        theme: ThemeData(
-          useMaterial3: true,
-          primarySwatch: Colors.blue,
-        ),
-        home: const MyHomePage(),
-      ),
-    );
-  }
-}
-
-class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text(
-          'Flutter bLOC',
-          style: TextStyle(
-            fontSize: 17,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const Center(child: Text('Counter pushed:😀')),
-          const SizedBox(
-            height: 15,
-          ),
-          BlocConsumer<CounterCubit, CounterState>(builder: (context, state) {
-            return Text(
-              state.counterValue.toString(),
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
-            );
-          }, listener: ((context, state) {
-            if (state.wasIncremented == true) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Addition verified 😂')));
-            } else if (state.wasIncremented == false) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Minus verified 🥵')));
-            }
-          })),
-          const SizedBox(
-            height: 35,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              FloatingActionButton(
-                onPressed: () {
-                  BlocProvider.of<CounterCubit>(context).increment();
-                },
-                child: const Icon(Icons.add),
-              ),
-              const SizedBox(
-                width: 45,
-              ),
-              FloatingActionButton(
-                onPressed: () {
-                  BlocProvider.of<CounterCubit>(context).decrement();
-                },
-                child: const Icon(Icons.minimize_outlined),
-              )
-            ],
-          )
-        ],
+        onGenerateRoute: _appRouter.onGenerateRoute,
       ),
     );
   }
